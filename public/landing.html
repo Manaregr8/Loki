@@ -7,6 +7,11 @@
   <meta name="description" content="LOKI builds AI-native software, cloud infrastructure, intelligent automation, and digital products engineered for scale. Start your project today." />
   <meta property="og:title" content="LOKI — Build What Others Can't Imagine" />
   <meta property="og:description" content="AI-native software and cloud engineering for operators who need serious results." />
+  <link rel="icon" type="image/x-icon" href="/favicon_io/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png" />
+  <link rel="manifest" href="/favicon_io/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
@@ -117,7 +122,7 @@
       backdrop-filter: blur(12px);
       transition: min-height 260ms ease, background 260ms ease, border-color 260ms ease;
     }
-    .site-nav.compact {
+    .site-nav.is-compact {
       min-height: 3.1rem;
       background: rgba(0,0,0,0.76);
       border-color: rgba(255,255,255,0.14);
@@ -125,17 +130,20 @@
 
     .nav-brand {
       display: inline-flex;
-      align-items: center;
-      gap: 0.52em;
-      font-family: "Space Grotesk", Inter, sans-serif;
-      font-size: clamp(1.1rem, 1.5vw, 1.4rem);
-      font-weight: 700;
-      text-shadow: 0 0 1.6rem rgba(255,255,255,0.18);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
     }
 
-    .nav-links-group {
+    .nav-toggle {
+      display: none;
+      width: 2.5rem;
+      height: 2.5rem;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: #030303;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .nav-links {
       display: flex;
       align-items: center;
       gap: clamp(1rem, 3vw, 2.2rem);
@@ -146,28 +154,14 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
-    .nav-links-group a { transition: color 180ms, text-shadow 180ms; }
-    .nav-links-group a:hover { color: #fff; text-shadow: 0 0 1.2rem rgba(124,58,237,0.75); }
 
-    .nav-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      min-height: 2.4rem;
-      padding: 0 1.1rem;
-      border: 1px solid var(--line-strong);
-      background: #050505;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      transition: border-color 220ms, box-shadow 220ms, transform 220ms;
+    .nav-links a {
+      transition: color 180ms ease, text-shadow 180ms ease;
     }
-    .nav-action:hover {
-      border-color: rgba(124,58,237,0.65);
-      box-shadow: 0 0 2.2rem rgba(124,58,237,0.24);
-      transform: translateY(-1px);
+
+    .nav-links a:hover {
+      color: #fff;
+      text-shadow: 0 0 1.2rem rgba(124,58,237,0.75);
     }
 
     /* ── HERO ── */
@@ -928,66 +922,65 @@
       position: relative;
       z-index: 3;
       width: min(1280px, calc(100% - 2rem));
-      margin: 0 auto 1rem;
+      min-height: 18rem;
       display: grid;
       grid-template-columns: 0.7fr 1fr 0.6fr;
       gap: 2rem;
       align-items: start;
+      margin: 0 auto 1rem;
       padding: clamp(1.5rem, 4vw, 3rem);
       border: 1px solid var(--line);
       background:
-        linear-gradient(90deg, rgba(255,255,255,0.032) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(255,255,255,0.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.035) 1px, transparent 1px),
         #020202;
       background-size: 30px 30px;
     }
-    .footer-brand {
-      font-family: "Space Grotesk", Inter, sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .footer-desc {
-      margin-top: 0.8rem;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.66rem;
-      letter-spacing: 0.1em;
-      color: var(--dim);
-      line-height: 1.7;
-    }
-    .footer-col-title {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      color: var(--dim);
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-    .footer-links-col { display: grid; gap: 0.6rem; }
-    .footer-links-col a, .site-footer span {
+
+    .site-footer p,
+    .site-footer span,
+    .footer-links a {
       color: rgba(255,255,255,0.58);
       font-family: "IBM Plex Mono", monospace;
       font-size: 0.72rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      transition: color 180ms;
     }
-    .footer-links-col a:hover { color: #fff; }
-    .footer-right { justify-items: end; }
-    .footer-right .footer-links-col { justify-items: end; }
+
+    .footer-links {
+      display: grid;
+      gap: 0.65rem;
+      justify-items: end;
+    }
+
+    .footer-links a:hover {
+      color: #fff;
+    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 980px) {
-      .nav-links-group { display: none; }
-      .why-grid         { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .stats-section    { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .how-grid         { grid-template-columns: repeat(3, minmax(0,1fr)); }
-      .testimonials-grid{ grid-template-columns: 1fr; }
-      .pricing-grid     { grid-template-columns: 1fr; }
-      .features-layout  { grid-template-columns: 1fr; }
-      .feature-panel    { display: none; }
-      .site-footer      { grid-template-columns: 1fr; }
+      .nav-toggle        { display: grid; }
+      .nav-links         {
+        position: absolute;
+        top: calc(100% + 0.6rem);
+        left: 0;
+        right: 0;
+        display: none;
+        grid-template-columns: 1fr 1fr;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        background: rgba(0,0,0,0.92);
+      }
+      .nav-links.is-open { display: grid; }
+      .why-grid          { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .stats-section     { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .how-grid          { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .pricing-grid      { grid-template-columns: 1fr; }
+      .features-layout   { grid-template-columns: 1fr; }
+      .feature-panel     { display: none; }
+      .site-footer       { grid-template-columns: 1fr; }
+      .footer-links      { justify-items: start; }
     }
 
     @media (max-width: 680px) {
