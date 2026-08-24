@@ -1,0 +1,1506 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOKI — Build What Others Can't Imagine</title>
+  <meta name="description" content="LOKI builds AI-native software, cloud infrastructure, intelligent automation, and digital products engineered for scale. Start your project today." />
+  <meta property="og:title" content="LOKI — Build What Others Can't Imagine" />
+  <meta property="og:description" content="AI-native software and cloud engineering for operators who need serious results." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    ::selection {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    /* ── TOKENS — exact LOKI palette ── */
+    :root {
+      --bg: #000;
+      --surface: #050505;
+      --card: #0a0a0a;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.18);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.65);
+      --dim: rgba(255,255,255,0.42);
+      --purple: #7c3aed;
+    }
+
+    html {
+      background: var(--bg);
+      scroll-behavior: smooth;
+      font-synthesis: none;
+      text-rendering: geometricPrecision;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: clip;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── FIXED LAYERS ── */
+    .noise-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      opacity: 0.08;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.8) 0 0.5px, transparent 1px),
+        radial-gradient(circle at 70% 12%, rgba(255,255,255,0.7) 0 0.5px, transparent 1px),
+        radial-gradient(circle at 45% 80%, rgba(255,255,255,0.75) 0 0.5px, transparent 1px);
+      background-size: 7px 7px, 11px 11px, 13px 13px;
+      mix-blend-mode: screen;
+    }
+
+    .grid-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 0, rgba(255,255,255,0.045) 1px, transparent 1px),
+        linear-gradient(180deg, transparent 0, rgba(255,255,255,0.034) 1px, transparent 1px);
+      background-size: 20vw 20svh;
+      opacity: 0.32;
+      mask-image: linear-gradient(180deg, transparent, #000 12%, #000 82%, transparent);
+    }
+
+    .scroll-bar {
+      position: fixed;
+      z-index: 100;
+      top: 0; left: 0;
+      width: var(--prog, 0%);
+      height: 1px;
+      background: #fff;
+      box-shadow: 0 0 1.6rem rgba(124,58,237,0.82);
+      pointer-events: none;
+    }
+
+    /* ── LAYOUT ── */
+    .wrap {
+      position: relative;
+      z-index: 2;
+      width: min(1200px, calc(100% - 2.5rem));
+      margin: 0 auto;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: fixed;
+      z-index: 70;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1160px, calc(100% - 2rem));
+      min-height: 3.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.72rem 1.1rem;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.34);
+      backdrop-filter: blur(12px);
+      transition: min-height 260ms ease, background 260ms ease, border-color 260ms ease;
+    }
+    .site-nav.compact {
+      min-height: 3.1rem;
+      background: rgba(0,0,0,0.76);
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.52em;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+      font-weight: 700;
+      text-shadow: 0 0 1.6rem rgba(255,255,255,0.18);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-links-group {
+      display: flex;
+      align-items: center;
+      gap: clamp(1rem, 3vw, 2.2rem);
+      color: rgba(255,255,255,0.7);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .nav-links-group a { transition: color 180ms, text-shadow 180ms; }
+    .nav-links-group a:hover { color: #fff; text-shadow: 0 0 1.2rem rgba(124,58,237,0.75); }
+
+    .nav-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 2.4rem;
+      padding: 0 1.1rem;
+      border: 1px solid var(--line-strong);
+      background: #050505;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: border-color 220ms, box-shadow 220ms, transform 220ms;
+    }
+    .nav-action:hover {
+      border-color: rgba(124,58,237,0.65);
+      box-shadow: 0 0 2.2rem rgba(124,58,237,0.24);
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 2;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 32%, rgba(255,255,255,0.12), transparent 17rem),
+        linear-gradient(180deg, #000 0%, transparent 30%, transparent 72%, #000 100%);
+    }
+
+    .hero-body {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      padding: 9rem 1.5rem 6rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 2rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.58);
+      text-transform: uppercase;
+    }
+    .eyebrow-line {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: rgba(124,58,237,0.8);
+    }
+
+    h1 {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      color: #fff;
+    }
+
+    .h1-accent {
+      display: block;
+      color: #fff;
+    }
+
+    .hero-sub {
+      max-width: 50ch;
+      margin: 0 auto 2.8rem;
+      color: var(--muted);
+      font-size: clamp(0.95rem, 2vw, 1.12rem);
+      line-height: 1.72;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Shared button styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: border-color 220ms, box-shadow 220ms, transform 220ms;
+    }
+    .btn-solid {
+      min-height: 3rem;
+      padding: 0 1.6rem;
+      background: var(--purple);
+      border: 1px solid var(--purple);
+      color: #fff;
+      box-shadow: 0 0 2.4rem rgba(124,58,237,0.32);
+    }
+    .btn-solid:hover {
+      border-color: rgba(124,58,237,0.85);
+      box-shadow: 0 0 3.6rem rgba(124,58,237,0.52);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      min-height: 3rem;
+      padding: 0 1.6rem;
+      border: 1px solid var(--line-strong);
+      background: #050505;
+      color: var(--muted);
+    }
+    .btn-outline:hover {
+      border-color: rgba(255,255,255,0.38);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* Hero dashboard */
+    .hero-panel {
+      position: relative;
+      z-index: 3;
+      margin: 4rem auto 0;
+      width: min(780px, calc(100% - 2rem));
+    }
+    .panel-inner {
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(124,58,237,0.08), transparent 18rem),
+        #050505;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+    .panel-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .p-dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+
+    .panel-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .metric-cell {
+      padding: 1rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.025);
+    }
+    .metric-val {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .metric-val.up  { color: rgba(255,255,255,0.92); }
+    .metric-val.mid { color: rgba(124,58,237,0.9); }
+    .metric-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .panel-chart {
+      height: 72px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.015);
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      padding: 0.75rem 0.75rem 0;
+    }
+    .chart-col {
+      flex: 1;
+      background: linear-gradient(180deg, rgba(124,58,237,0.72), rgba(124,58,237,0.18));
+      animation: barGrow 1.2s 0.6s cubic-bezier(0.16,1,0.3,1) both;
+      transform-origin: bottom;
+    }
+    @keyframes barGrow {
+      from { transform: scaleY(0); }
+      to   { transform: scaleY(1); }
+    }
+
+    .panel-glow {
+      position: absolute;
+      bottom: -3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 6rem;
+      background: radial-gradient(ellipse, rgba(124,58,237,0.28), transparent 70%);
+      filter: blur(16px);
+      pointer-events: none;
+    }
+
+    /* ── STRIP (trust bar) ── */
+    .trust-strip {
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.012);
+      padding: 1.2rem 0;
+    }
+    .trust-strip-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .trust-tag {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      padding-right: 1rem;
+      border-right: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    .trust-names {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .trust-name {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.34);
+      transition: color 180ms;
+    }
+    .trust-name:hover { color: rgba(255,255,255,0.58); }
+
+    /* ── SECTION SHARED ── */
+    .section-mono {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.58);
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.2rem, 5vw, 5.4rem);
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    h3 {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-weight: 700;
+      font-size: clamp(1rem, 1.8vw, 1.6rem);
+      line-height: 1;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    p { color: var(--muted); line-height: 1.75; }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 900ms ease, transform 900ms cubic-bezier(0.16,1,0.3,1);
+    }
+    [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ── WHY SECTION ── */
+    .why-section {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: clamp(5rem, 10vw, 9rem) 0;
+    }
+    .why-header {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+      margin-bottom: clamp(2.5rem, 6vw, 5rem);
+      text-align: center;
+    }
+    .why-header h2 { max-width: 14ch; }
+    .why-header p { max-width: 48ch; font-size: 0.96rem; }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+    .why-card {
+      padding: clamp(1.2rem, 3vw, 2.2rem);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.032), transparent),
+        #020202;
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    }
+    .why-card:hover {
+      z-index: 4;
+      transform: translateY(-5px);
+      border-color: rgba(124,58,237,0.42);
+      box-shadow: 0 0 3rem rgba(124,58,237,0.12);
+    }
+    .why-icon-wrap {
+      width: 2.2rem;
+      height: 2.2rem;
+      margin-bottom: 1.4rem;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,0.72);
+    }
+    .why-card h3 { margin-bottom: 0.7rem; font-size: clamp(0.95rem, 1.4vw, 1.2rem); }
+    .why-card p  { color: rgba(255,255,255,0.57); font-size: 0.9rem; margin: 0; }
+
+    /* ── STATS ── */
+    .stats-section {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+    .stat-cell {
+      min-height: 11rem;
+      display: grid;
+      align-content: center;
+      gap: 0.4rem;
+      padding: 1.4rem;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: #020202;
+    }
+    .stat-val {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(2rem, 4vw, 4.2rem);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* ── FEATURES SECTION ── */
+    .features-section {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: clamp(5rem, 10vw, 9rem) 0;
+    }
+    .features-header {
+      display: grid;
+      justify-items: start;
+      gap: 1rem;
+      margin-bottom: clamp(2rem, 5vw, 4rem);
+    }
+    .features-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: start;
+    }
+    .feature-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .feature-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1.3rem 1.2rem;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent),
+        #020202;
+      transition: border-color 220ms, box-shadow 220ms, transform 220ms;
+      cursor: pointer;
+    }
+    .feature-item:hover, .feature-item.active {
+      border-color: rgba(124,58,237,0.42);
+      box-shadow: 0 0 2.4rem rgba(124,58,237,0.1);
+      transform: translateX(4px);
+    }
+    .fi-num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.64rem;
+      color: rgba(255,255,255,0.38);
+      padding-top: 0.18rem;
+      min-width: 1.8rem;
+    }
+    .feature-item.active .fi-num { color: rgba(124,58,237,0.8); }
+    .fi-title {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: 0.96rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.35rem;
+    }
+    .fi-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.62;
+      margin: 0;
+    }
+
+    /* Feature panel */
+    .feature-panel {
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 70% 20%, rgba(124,58,237,0.08), transparent 14rem),
+        #050505;
+      padding: 1.6rem;
+    }
+    .fp-mono {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+    .fp-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.82rem 1rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.022);
+      margin-bottom: 0.5rem;
+      font-size: 0.82rem;
+    }
+    .fp-row-key { color: var(--muted); font-weight: 500; }
+    .fp-row-val { font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; color: rgba(255,255,255,0.88); }
+    .fp-row-val.ok  { color: rgba(124,58,237,0.9); }
+    .fp-row-val.dim { color: var(--dim); }
+
+    .fp-bars { margin-top: 1.4rem; }
+    .fp-bar-row { margin-bottom: 1rem; }
+    .fp-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 0.45rem;
+    }
+    .fp-track {
+      height: 2px;
+      background: var(--line);
+    }
+    .fp-fill {
+      height: 100%;
+      background: var(--purple);
+      animation: fillIn 1.4s 0.8s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes fillIn { from { width: 0 !important; } }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: clamp(5rem, 10vw, 9rem) clamp(1rem, 5vw, 4rem);
+    }
+    .how-header {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+      margin-bottom: clamp(2.5rem, 6vw, 5rem);
+      text-align: center;
+    }
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+    .how-step {
+      min-height: 18rem;
+      padding: 1.2rem;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+    }
+    .step-num {
+      display: block;
+      margin-bottom: 4rem;
+      color: rgba(255,255,255,0.38);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+    }
+    .how-step h3 { margin-bottom: 0.8rem; font-size: 1.1rem; }
+    .how-step p  { color: rgba(255,255,255,0.57); font-size: 0.88rem; margin: 0; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-section {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: clamp(5rem, 10vw, 9rem) clamp(1rem, 5vw, 4rem);
+    }
+    .testimonials-header {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+      margin-bottom: clamp(2rem, 5vw, 4rem);
+      text-align: center;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+    .t-card {
+      min-height: 20rem;
+      display: grid;
+      align-content: space-between;
+      gap: 2rem;
+      margin: 0;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.032), transparent),
+        #020202;
+      transition: border-color 220ms, transform 220ms, box-shadow 220ms;
+    }
+    .t-card:hover {
+      border-color: rgba(124,58,237,0.38);
+      transform: translateY(-4px);
+      box-shadow: 0 0 2.4rem rgba(124,58,237,0.1);
+    }
+    .t-stars {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 1rem;
+    }
+    .t-star {
+      width: 10px;
+      height: 10px;
+      background: rgba(255,255,255,0.72);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+    .t-quote {
+      margin: 0;
+      color: rgba(255,255,255,0.76);
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: clamp(0.95rem, 1.6vw, 1.3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+    .t-cite {
+      color: rgba(255,255,255,0.55);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-style: normal;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    /* ── PRICING ── */
+    .pricing-section {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: clamp(5rem, 10vw, 9rem) 0;
+    }
+    .pricing-header {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+      margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+      text-align: center;
+    }
+    .pricing-header p { max-width: 46ch; font-size: 0.96rem; }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+    .pricing-card {
+      position: relative;
+      padding: clamp(1.4rem, 3vw, 2.2rem);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.032), transparent),
+        #020202;
+    }
+    .pricing-card.featured {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(124,58,237,0.12), transparent 16rem),
+        linear-gradient(180deg, rgba(255,255,255,0.032), transparent),
+        #020202;
+      border-color: rgba(124,58,237,0.28);
+    }
+    .pricing-badge {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 0.28rem 0.9rem;
+      background: var(--purple);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      color: #fff;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .pricing-tier {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.64rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .pricing-amount {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.3rem;
+    }
+    .pricing-period {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      margin-bottom: 1.8rem;
+    }
+    .pricing-divider {
+      height: 1px;
+      background: var(--line);
+      margin-bottom: 1.6rem;
+    }
+    .pricing-perks {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin-bottom: 2rem;
+    }
+    .pricing-perks li {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .perk-check {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+      color: rgba(124,58,237,0.8);
+    }
+    .pricing-perks li.off { color: var(--dim); }
+    .pricing-perks li.off .perk-check { color: var(--dim); opacity: 0.4; }
+
+    .btn-plan {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      min-height: 3rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: border-color 220ms, box-shadow 220ms, transform 220ms;
+    }
+    .btn-plan.outline {
+      border: 1px solid var(--line-strong);
+      background: #050505;
+      color: var(--muted);
+    }
+    .btn-plan.outline:hover { border-color: rgba(255,255,255,0.35); color: #fff; transform: translateY(-2px); }
+    .btn-plan.solid {
+      background: var(--purple);
+      border: 1px solid var(--purple);
+      color: #fff;
+      box-shadow: 0 0 2rem rgba(124,58,237,0.28);
+    }
+    .btn-plan.solid:hover { box-shadow: 0 0 3rem rgba(124,58,237,0.48); transform: translateY(-2px); }
+
+    /* ── CTA ── */
+    .cta-section {
+      position: relative;
+      min-height: 88svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: clamp(5rem, 10vw, 9rem) 1rem;
+      text-align: center;
+    }
+    .cta-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255,255,255,0.1), transparent 14rem),
+        linear-gradient(180deg, #000, transparent 40%, #000);
+    }
+    .cta-body {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      justify-items: center;
+      gap: 1.5rem;
+    }
+    .cta-body h2 { max-width: 16ch; }
+    .cta-body p  { max-width: 46ch; font-size: 0.96rem; }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .cta-footnote {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-top: 0.5rem;
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      position: relative;
+      z-index: 3;
+      width: min(1280px, calc(100% - 2rem));
+      margin: 0 auto 1rem;
+      display: grid;
+      grid-template-columns: 0.7fr 1fr 0.6fr;
+      gap: 2rem;
+      align-items: start;
+      padding: clamp(1.5rem, 4vw, 3rem);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.032) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.032) 1px, transparent 1px),
+        #020202;
+      background-size: 30px 30px;
+    }
+    .footer-brand {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .footer-desc {
+      margin-top: 0.8rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+      line-height: 1.7;
+    }
+    .footer-col-title {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .footer-links-col { display: grid; gap: 0.6rem; }
+    .footer-links-col a, .site-footer span {
+      color: rgba(255,255,255,0.58);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 180ms;
+    }
+    .footer-links-col a:hover { color: #fff; }
+    .footer-right { justify-items: end; }
+    .footer-right .footer-links-col { justify-items: end; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 980px) {
+      .nav-links-group { display: none; }
+      .why-grid         { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .stats-section    { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .how-grid         { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .testimonials-grid{ grid-template-columns: 1fr; }
+      .pricing-grid     { grid-template-columns: 1fr; }
+      .features-layout  { grid-template-columns: 1fr; }
+      .feature-panel    { display: none; }
+      .site-footer      { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .why-grid  { grid-template-columns: 1fr; }
+      .stats-section { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .how-grid  { grid-template-columns: 1fr; }
+      .how-step  { min-height: auto; }
+      .panel-metrics { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-section { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="noise-layer" aria-hidden="true"></div>
+<div class="grid-layer"  aria-hidden="true"></div>
+<div class="scroll-bar"  aria-hidden="true" id="prog"></div>
+
+<!-- ── NAV ── -->
+<nav class="site-nav" id="site-nav" aria-label="Primary navigation">
+  <a href="/index.html#top" class="nav-brand magnetic">
+    <img src="/logo.png" alt="LOKI" style="height:32px;width:auto;display:block;" />
+  </a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('is-open')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+  </button>
+  <div class="nav-links">
+    <a href="/index.html#about">About</a>
+    <a href="/index.html#services-deep">Services</a>
+    <a href="/index.html#tech">Tech</a>
+    <a href="#pricing">Pricing</a>
+    <a href="/index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="top" aria-labelledby="hero-headline">
+  <div class="hero-body">
+    <div class="eyebrow" style="display: none;">
+      <span class="eyebrow-line" aria-hidden="true"></span>
+    </div>
+    <h1 id="hero-headline">
+      Build What
+      <span class="h1-accent">Others Can't</span>
+    </h1>
+    <p class="hero-sub">
+      LOKI turns ambitious ideas into operational systems. AI software, cloud infrastructure, intelligent automation, and digital products — engineered for scale from day one.
+    </p>
+    <div class="hero-actions">
+      <a href="mailto:hello@loki.tech" class="btn btn-solid" id="hero-cta">
+        Start Your Project
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#why" class="btn btn-outline" id="hero-see-how">
+        See How It Works
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-panel">
+      <div class="panel-inner" role="img" aria-label="Live system dashboard">
+        <div class="panel-titlebar" aria-hidden="true">
+          <div class="p-dot"></div><div class="p-dot"></div><div class="p-dot"></div>
+        </div>
+        <div class="panel-metrics">
+          <div class="metric-cell">
+            <div class="metric-val up">312%</div>
+            <div class="metric-label">Operational Lift</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-val mid">99.9%</div>
+            <div class="metric-label">System Uptime</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-val up">50+</div>
+            <div class="metric-label">Products Shipped</div>
+          </div>
+        </div>
+        <div class="panel-chart" aria-hidden="true">
+          <div class="chart-col" style="height:28%"></div>
+          <div class="chart-col" style="height:44%"></div>
+          <div class="chart-col" style="height:36%"></div>
+          <div class="chart-col" style="height:60%"></div>
+          <div class="chart-col" style="height:52%"></div>
+          <div class="chart-col" style="height:74%"></div>
+          <div class="chart-col" style="height:68%"></div>
+          <div class="chart-col" style="height:86%"></div>
+          <div class="chart-col" style="height:80%"></div>
+          <div class="chart-col" style="height:94%"></div>
+          <div class="chart-col" style="height:90%"></div>
+          <div class="chart-col" style="height:100%"></div>
+        </div>
+      </div>
+      <div class="panel-glow" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST STRIP ── -->
+<div class="trust-strip" aria-label="Trusted by">
+  <div class="wrap">
+    <div class="trust-strip-inner">
+      <span class="trust-tag">Trusted by</span>
+      <div class="trust-names" role="list">
+        <span class="trust-name" role="listitem">Acme Ventures</span>
+        <span class="trust-name" role="listitem">Nexus Cloud</span>
+        <span class="trust-name" role="listitem">Pulse Systems</span>
+        <span class="trust-name" role="listitem">Orbital CRM</span>
+        <span class="trust-name" role="listitem">Signal Ops</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WHY LOKI ── -->
+<section class="why-section" id="why" aria-labelledby="why-title">
+  <div class="why-header" data-reveal>
+    <p class="section-mono">[ WHY LOKI ]</p>
+    <h2 id="why-title">Serious engineering<br>for serious operators.</h2>
+    <p>Most agencies ship demos. We ship systems. Every project is architected for real scale, real team use, and real operational leverage.</p>
+  </div>
+  <div class="why-grid">
+
+    <div class="why-card" data-reveal>
+      <div class="why-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      </div>
+      <h3>AI-Native by Default</h3>
+      <p>We don't bolt AI on as an afterthought. Every system is designed from the ground up with intelligence, automation, and adaptability as core primitives.</p>
+    </div>
+
+    <div class="why-card" data-reveal>
+      <div class="why-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <h3>Architecture First</h3>
+      <p>Before a line of code is written, we map every data surface, dependency, and constraint. The result: systems that stay clean under pressure.</p>
+    </div>
+
+    <div class="why-card" data-reveal>
+      <div class="why-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <h3>Speed Without Shortcuts</h3>
+      <p>Rapid delivery without sacrificing fundamentals. Focused sprint cycles ship working systems fast — and keep them working at scale.</p>
+    </div>
+
+    <div class="why-card" data-reveal>
+      <div class="why-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Security and Reliability</h3>
+      <p>Trust boundaries, observability, and hardened infrastructure baked in from the start. We design for the 99.9% and the edge cases that define uptime.</p>
+    </div>
+
+    <div class="why-card" data-reveal>
+      <div class="why-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24A2.5 2.5 0 0 1 9.5 2"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24A2.5 2.5 0 0 0 14.5 2"/></svg>
+      </div>
+      <h3>Full-Spectrum Thinking</h3>
+      <p>Strategy, design, engineering, and ops move as one. No hand-off gaps, no translation loss — a unified team that builds end-to-end.</p>
+    </div>
+
+    <div class="why-card" data-reveal>
+      <div class="why-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <h3>Systems That Compound</h3>
+      <p>We build platforms, not features. Every system is designed to generate data, drive automation, and improve itself over time.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<section class="stats-section" aria-label="LOKI by the numbers">
+  <div class="stat-cell" data-reveal>
+    <strong class="stat-val">50+</strong>
+    <span class="stat-label">Products Shipped</span>
+  </div>
+  <div class="stat-cell" data-reveal>
+    <strong class="stat-val">200+</strong>
+    <span class="stat-label">Automation Flows Built</span>
+  </div>
+  <div class="stat-cell" data-reveal>
+    <strong class="stat-val">99.9%</strong>
+    <span class="stat-label">Uptime Track Record</span>
+  </div>
+  <div class="stat-cell" data-reveal>
+    <strong class="stat-val">24/7</strong>
+    <span class="stat-label">Systems Operational</span>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="features-section" id="features" aria-labelledby="features-title">
+  <div class="features-header" data-reveal>
+    <p class="section-mono">[ WHAT WE BUILD ]</p>
+    <h2 id="features-title">Everything your product needs.<br>Nothing it doesn't.</h2>
+  </div>
+  <div class="features-layout">
+    <div class="feature-list" data-reveal>
+
+      <div class="feature-item active" tabindex="0" id="feat-1" aria-label="AI Solutions feature">
+        <div class="fi-num">01</div>
+        <div>
+          <div class="fi-title">AI Solutions and Agents</div>
+          <p class="fi-desc">Custom AI systems with tools, memory, evaluation loops, and clear escalation paths — built to run in real teams, not just demos.</p>
+        </div>
+      </div>
+
+      <div class="feature-item" tabindex="0" id="feat-2" aria-label="Software Engineering feature">
+        <div class="fi-num">02</div>
+        <div>
+          <div class="fi-title">Software Engineering</div>
+          <p class="fi-desc">Scalable product engineering with precise architecture, clean interfaces, and measurable performance at every layer.</p>
+        </div>
+      </div>
+
+      <div class="feature-item" tabindex="0" id="feat-3" aria-label="Cloud Infrastructure feature">
+        <div class="fi-num">03</div>
+        <div>
+          <div class="fi-title">Cloud Infrastructure</div>
+          <p class="fi-desc">Secure, resilient, future-ready cloud architecture for products that cannot feel fragile under load or scale.</p>
+        </div>
+      </div>
+
+      <div class="feature-item" tabindex="0" id="feat-4" aria-label="Automation feature">
+        <div class="fi-num">04</div>
+        <div>
+          <div class="fi-title">Intelligent Automation</div>
+          <p class="fi-desc">Workflow engines, handoff logic, and integrations that remove repetitive human drag and create operational leverage.</p>
+        </div>
+      </div>
+
+      <div class="feature-item" tabindex="0" id="feat-5" aria-label="Digital Products feature">
+        <div class="fi-num">05</div>
+        <div>
+          <div class="fi-title">Digital Products</div>
+          <p class="fi-desc">End-to-end digital experiences engineered for speed, adoption, and long-term maintainability from launch to scale.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="feature-panel" data-reveal aria-label="System status panel">
+      <p class="fp-mono">// SYSTEM STATUS</p>
+      <div class="fp-row">
+        <span class="fp-row-key">AI Orchestration</span>
+        <span class="fp-row-val ok">ACTIVE</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-row-key">Data Pipeline</span>
+        <span class="fp-row-val ok">HEALTHY</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-row-key">Agent Instances</span>
+        <span class="fp-row-val">24 RUNNING</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-row-key">Error Rate</span>
+        <span class="fp-row-val ok">0.001%</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-row-key">Latency P95</span>
+        <span class="fp-row-val dim">142ms</span>
+      </div>
+      <div class="fp-bars">
+        <div class="fp-bar-row">
+          <div class="fp-bar-label"><span>Infrastructure Load</span><span>42%</span></div>
+          <div class="fp-track"><div class="fp-fill" style="width:42%"></div></div>
+        </div>
+        <div class="fp-bar-row">
+          <div class="fp-bar-label"><span>AI Throughput</span><span>78%</span></div>
+          <div class="fp-track"><div class="fp-fill" style="width:78%"></div></div>
+        </div>
+        <div class="fp-bar-row">
+          <div class="fp-bar-label"><span>Automation Coverage</span><span>91%</span></div>
+          <div class="fp-track"><div class="fp-fill" style="width:91%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section class="how-section" id="process" aria-labelledby="how-title">
+  <div class="how-header" data-reveal>
+    <p class="section-mono">[ DEVELOPMENT ROADMAP ]</p>
+    <h2 id="how-title">From signal to system<br>without losing the plot.</h2>
+  </div>
+  <div class="how-grid">
+    <div class="how-step" data-reveal>
+      <span class="step-num">01</span>
+      <h3>Decode</h3>
+      <p>Map the business system, constraints, data surfaces, and points of leverage before anything else is touched.</p>
+    </div>
+    <div class="how-step" data-reveal>
+      <span class="step-num">02</span>
+      <h3>Architect</h3>
+      <p>Define interfaces, model behavior, infrastructure, metrics, and ownership boundaries with precision.</p>
+    </div>
+    <div class="how-step" data-reveal>
+      <span class="step-num">03</span>
+      <h3>Build</h3>
+      <p>Ship working systems in focused cycles with tight feedback and visible progress at every sprint.</p>
+    </div>
+    <div class="how-step" data-reveal>
+      <span class="step-num">04</span>
+      <h3>Harden</h3>
+      <p>Instrument, test, secure, and optimize the system before it becomes operational gravity for your team.</p>
+    </div>
+    <div class="how-step" data-reveal>
+      <span class="step-num">05</span>
+      <h3>Compound</h3>
+      <p>Improve through live signals, automation expansion, and performance loops that make systems smarter over time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials-section" aria-labelledby="testimonials-title">
+  <div class="testimonials-header" data-reveal>
+    <p class="section-mono">[ TRUSTED BY OPERATORS ]</p>
+    <h2 id="testimonials-title">Built with the teams who<br>cannot afford vague technology.</h2>
+  </div>
+  <div class="testimonials-grid">
+
+    <blockquote class="t-card" data-reveal>
+      <div>
+        <div class="t-stars" aria-label="5 out of 5 stars">
+          <div class="t-star"></div><div class="t-star"></div><div class="t-star"></div><div class="t-star"></div><div class="t-star"></div>
+        </div>
+        <p class="t-quote">LOKI turned a messy operational idea into an AI product our entire team could trust in production. Architecture was thoughtful, execution was tight.</p>
+      </div>
+      <cite class="t-cite"><a href="https://zealoops.com" target="_blank" rel="noopener noreferrer">Zealoops</a> &mdash; Website Development</cite>
+    </blockquote>
+
+    <blockquote class="t-card" data-reveal>
+      <div>
+        <div class="t-stars" aria-label="5 out of 5 stars">
+          <div class="t-star"></div><div class="t-star"></div><div class="t-star"></div><div class="t-star"></div><div class="t-star"></div>
+        </div>
+        <p class="t-quote">They think like architects, designers, and operators all at once. The result felt inevitable — like the system was always supposed to work this way.</p>
+      </div>
+      <cite class="t-cite"><a href="https://myspacetime.in" target="_blank" rel="noopener noreferrer">Spacetime Coworking</a> &mdash; Complete Technical Support</cite>
+    </blockquote>
+
+    <blockquote class="t-card" data-reveal>
+      <div>
+        <div class="t-stars" aria-label="5 out of 5 stars">
+          <div class="t-star"></div><div class="t-star"></div><div class="t-star"></div><div class="t-star"></div><div class="t-star"></div>
+        </div>
+        <p class="t-quote">The work was precise, fast, and unusually clear. We shipped more than a prototype — we shipped something we're proud to demo to enterprise clients.</p>
+      </div>
+      <cite class="t-cite"><a href="https://corpsourceone.com" target="_blank" rel="noopener noreferrer">Corpsourceone</a> &mdash; Integrated System development</cite>
+    </blockquote>
+
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="pricing-section" id="pricing" aria-labelledby="pricing-title">
+  <div class="pricing-header" data-reveal>
+    <p class="section-mono">[ ENGAGEMENT MODELS ]</p>
+    <h2 id="pricing-title">One team. Three ways to work.</h2>
+    <p>Every engagement includes direct access to senior engineers. No handoffs, no junior-first execution — just the team that ships.</p>
+  </div>
+  <div class="pricing-grid">
+
+    <!-- Team Ownership -->
+    <div class="pricing-card featured" data-reveal>
+      <div class="pricing-badge">Team Ownership</div>
+      <p class="pricing-tier">Monthly Retainer</p>
+      <p class="pricing-amount">₹30K</p>
+      <p class="pricing-period">per month &mdash; full team, full ownership</p>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-perks">
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Dedicated full-stack team</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Unlimited sprint capacity</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>AI, cloud, and product in one team</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Weekly strategy and review calls</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Dedicated Slack and direct access</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Full architecture ownership</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Monthly performance reports</li>
+      </ul>
+      <a href="mailto:hello@loki.tech?subject=Team Ownership Inquiry" class="btn-plan solid" id="plan-team">
+        Start Team Ownership
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- Brand Centric Website -->
+    <div class="pricing-card" data-reveal>
+      <p class="pricing-tier">Brand Centric Website</p>
+      <p class="pricing-amount">₹30K</p>
+      <p class="pricing-period">one-time &mdash; full brand and web delivery</p>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-perks">
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Brand strategy and identity system</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Custom website design and build</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Conversion-focused architecture</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Motion and interaction design</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>CMS integration and handoff</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>SEO and performance optimized</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Full source code ownership</li>
+      </ul>
+      <a href="mailto:hello@loki.tech?subject=Brand Website Inquiry" class="btn-plan outline" id="plan-brand">
+        Start Brand Project
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- Custom and Partnerships -->
+    <div class="pricing-card" data-reveal>
+      <p class="pricing-tier">Custom and Partnerships</p>
+      <p class="pricing-amount">Custom</p>
+      <p class="pricing-period">scoped to your mission and scale</p>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-perks">
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>White-label and co-build models</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Agency and studio partnerships</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Revenue share arrangements</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Multi-system and platform builds</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Custom SLA and compliance</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Joint go-to-market strategy</li>
+        <li><svg class="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Executive-level relationship</li>
+      </ul>
+      <a href="mailto:hello@loki.tech?subject=Custom Partnership Inquiry" class="btn-plan outline" id="plan-custom">
+        Discuss Partnership
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section" aria-labelledby="cta-title">
+  <div class="cta-body" data-reveal>
+    <p class="section-mono">[ LET'S BUILD TOGETHER ]</p>
+    <h2 id="cta-title">Bring the impossible system.<br>We will make it operational.</h2>
+    <p>No pitch decks. No vague roadmaps. Just a direct conversation about what you need and whether LOKI is the right team to build it.</p>
+    <div class="cta-actions">
+      <a href="mailto:hello@loki.tech" class="btn btn-solid" id="cta-primary" style="min-height:3.4rem;padding:0 2rem;font-size:0.78rem;">
+        Start a Project
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="mailto:careers@loki.tech" class="btn btn-outline" id="cta-careers" style="min-height:3.4rem;padding:0 2rem;font-size:0.78rem;">
+        Join the Team
+      </a>
+    </div>
+    <p class="cta-footnote">hello@loki.tech &nbsp;&mdash;&nbsp; Response within 24h &nbsp;&mdash;&nbsp; No commitment required</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <a href="#top" aria-label="Back to top">
+    <img src="/logo.png" alt="LOKI" style="height:32px;width:auto;display:block;" />
+  </a>
+  <div>
+    <p>AI-native software, cloud infrastructure, intelligent automation, and digital products. Built for operators who need serious engineering.</p>
+    <span>© <span id="yr"></span> LOKI TECHNOLOGIES — <a href="mailto:hello@loki.tech" style="color:inherit">hello@loki.tech</a></span>
+  </div>
+  <div class="footer-links">
+    <a href="/index.html#top">Home</a>
+    <a href="/index.html#about">About</a>
+    <a href="/index.html#services-deep">Services</a>
+    <a href="/index.html#tech">Tech</a>
+    <a href="#pricing">Pricing</a>
+    <a href="/index.html#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Scroll progress + compact nav
+  const prog = document.getElementById('prog');
+  const nav  = document.getElementById('site-nav');
+  window.addEventListener('scroll', () => {
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    prog.style.setProperty('--prog', (window.scrollY / max * 100) + '%');
+    prog.style.width = (window.scrollY / max * 100) + '%';
+    nav.classList.toggle('compact', window.scrollY > 80);
+  }, { passive: true });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('is-visible'), i * 70);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  // Feature item active state
+  document.querySelectorAll('.feature-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.feature-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
+    });
+  });
+</script>
+</body>
+</html>
