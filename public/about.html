@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — LOKI</title>
+  <meta name="description" content="Learn about LOKI. We build AI-native software, cloud infrastructure, and intelligent automation." />
+  <meta property="og:title" content="About Us — LOKI" />
+  <meta property="og:description" content="The team behind the operational systems of tomorrow." />
+  <link rel="icon" type="image/x-icon" href="/favicon_io/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.22) #000000;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* ── CUSTOM SCROLLBAR (Black background with thin grey thumb) ── */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background-color: #000000;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.22);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    ::selection { background: var(--purple); color: #fff; }
+
+    /* ── TOKENS ── */
+    :root {
+      --bg: #000;
+      --surface: #050505;
+      --card: #0a0a0a;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.18);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.65);
+      --dim: rgba(255,255,255,0.42);
+      --purple: #7c3aed;
+    }
+    html { background: var(--bg); scroll-behavior: smooth; font-synthesis: none; text-rendering: geometricPrecision; }
+    body {
+      margin: 0; min-width: 320px; overflow-x: clip;
+      background: var(--bg); color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── FIXED LAYERS ── */
+    .noise-layer {
+      position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0.08;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.8) 0 0.5px, transparent 1px),
+        radial-gradient(circle at 70% 12%, rgba(255,255,255,0.7) 0 0.5px, transparent 1px),
+        radial-gradient(circle at 45% 80%, rgba(255,255,255,0.75) 0 0.5px, transparent 1px);
+      background-size: 7px 7px, 11px 11px, 13px 13px; mix-blend-mode: screen;
+    }
+    .grid-layer {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 0, rgba(255,255,255,0.045) 1px, transparent 1px),
+        linear-gradient(180deg, transparent 0, rgba(255,255,255,0.034) 1px, transparent 1px);
+      background-size: 20vw 20svh; opacity: 0.32;
+      mask-image: linear-gradient(180deg, transparent, #000 12%, #000 82%, transparent);
+    }
+    .scroll-bar {
+      position: fixed; z-index: 100; top: 0; left: 0; width: var(--prog, 0%); height: 1px;
+      background: #fff; box-shadow: 0 0 1.6rem rgba(124,58,237,0.82); pointer-events: none;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: fixed; z-index: 70; top: 1rem; left: 50%; transform: translateX(-50%);
+      width: min(1160px, calc(100% - 2rem)); min-height: 3.7rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 0.72rem 1.1rem; border: 1px solid var(--line);
+      background: rgba(0,0,0,0.34); backdrop-filter: blur(12px);
+      transition: min-height 260ms ease, background 260ms ease, border-color 260ms ease;
+    }
+    .site-nav.is-compact { min-height: 3.1rem; background: rgba(0,0,0,0.76); border-color: rgba(255,255,255,0.14); }
+    .nav-brand { display: inline-flex; }
+    .nav-toggle {
+      display: none; width: 2.5rem; height: 2.5rem; place-items: center;
+      border: 1px solid var(--line); background: #030303; cursor: pointer; color: inherit;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: clamp(1rem, 3vw, 2.2rem); color: rgba(255,255,255,0.7);
+      font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+    }
+    .nav-links a { transition: color 180ms ease, text-shadow 180ms ease; }
+    .nav-links a:hover { color: #fff; text-shadow: 0 0 1.2rem rgba(124,58,237,0.75); }
+    .nav-links a[aria-current="page"] { color: #fff; }
+
+    /* ── SHARED TYPE ── */
+    .section-mono {
+      font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.58);
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-family: "Space Grotesk", Inter, sans-serif; font-weight: 700;
+      font-size: clamp(2.8rem, 6vw, 5.6rem); line-height: 0.94;
+      letter-spacing: -0.01em; text-transform: uppercase; color: #fff;
+    }
+    h2 {
+      font-family: "Space Grotesk", Inter, sans-serif; font-weight: 700;
+      font-size: clamp(1.6rem, 3vw, 2.8rem); line-height: 0.96;
+      letter-spacing: -0.01em; text-transform: uppercase; margin: 0;
+    }
+    h3 {
+      font-family: "Space Grotesk", Inter, sans-serif; font-weight: 700;
+      font-size: clamp(0.95rem, 1.6vw, 1.3rem); line-height: 1;
+      text-transform: uppercase; margin: 0;
+    }
+    p { color: var(--muted); line-height: 1.75; }
+
+    [data-reveal] {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity 900ms ease, transform 900ms cubic-bezier(0.16,1,0.3,1);
+    }
+    [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      transition: border-color 220ms, box-shadow 220ms, transform 220ms;
+    }
+    .btn-solid {
+      min-height: 3rem; padding: 0 1.6rem;
+      background: var(--purple); border: 1px solid var(--purple); color: #fff;
+      box-shadow: 0 0 2.4rem rgba(124,58,237,0.32);
+    }
+    .btn-solid:hover { border-color: rgba(124,58,237,0.85); box-shadow: 0 0 3.6rem rgba(124,58,237,0.52); transform: translateY(-2px); }
+    .btn-outline {
+      min-height: 3rem; padding: 0 1.6rem;
+      border: 1px solid var(--line-strong); background: #050505; color: var(--muted);
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.38); color: #fff; transform: translateY(-2px); }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      position: relative; z-index: 2;
+      padding: clamp(9rem, 16vw, 13rem) 0 clamp(4rem, 8vw, 7rem);
+      border-bottom: 1px solid var(--line); overflow: hidden;
+    }
+    .page-hero::before {
+      content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(124,58,237,0.12), transparent 28rem),
+        radial-gradient(circle at 88% 60%, rgba(124,58,237,0.06), transparent 20rem),
+        linear-gradient(180deg, #000 0%, transparent 40%, #000 100%);
+    }
+    .page-hero-inner {
+      width: min(1200px, calc(100% - 2.5rem)); margin: 0 auto;
+      display: grid; gap: 1.5rem; text-align: center; justify-items: center;
+    }
+    .page-hero-copy h1 { margin: 0; max-width: 15ch; margin-inline: auto; }
+    .page-hero-copy p { font-size: clamp(1rem, 1.8vw, 1.15rem); max-width: 50ch; margin: 1.5rem auto 0; }
+
+    /* ── MAIN BODY ── */
+    .about-body {
+      position: relative; z-index: 2;
+      width: min(1200px, calc(100% - 2.5rem)); margin: 0 auto;
+      padding: clamp(4rem, 8vw, 7rem) 0 clamp(5rem, 10vw, 9rem);
+      display: flex; flex-direction: column; gap: clamp(5rem, 10vw, 8rem);
+    }
+
+    /* ── SPLIT SECTION ── */
+    .split-section {
+      display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem, 6vw, 6rem); align-items: center;
+    }
+    .split-section.reverse { grid-template-columns: 1fr 1fr; direction: rtl; }
+    .split-section.reverse > * { direction: ltr; }
+    .split-copy h2 { margin-bottom: 1.5rem; }
+    .split-copy p { margin-bottom: 1.5rem; }
+    .split-copy p:last-child { margin-bottom: 0; }
+    
+    .visual-frame {
+      min-height: clamp(20rem, 30vw, 35rem);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent), #020202;
+      position: relative; overflow: hidden;
+      display: grid; place-items: center;
+    }
+    .visual-frame::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(124,58,237,0.1), transparent 70%);
+    }
+    
+    /* ── PRINCIPLES GRID ── */
+    .principles-header { text-align: center; margin-bottom: 3rem; }
+    .principles-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line); border-left: 1px solid var(--line);
+    }
+    .principle-card {
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), #020202;
+      transition: background 220ms;
+    }
+    .principle-card:hover { background: rgba(255,255,255,0.04); }
+    .pc-num {
+      font-family: "IBM Plex Mono", monospace; font-size: 0.72rem;
+      color: rgba(124,58,237,0.8); margin-bottom: 1.5rem; display: block;
+    }
+    .principle-card h3 { margin-bottom: 1rem; }
+    
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      position: relative; z-index: 2; border-top: 1px solid var(--line);
+      min-height: 72svh; display: grid; place-items: center; overflow: hidden;
+      padding: clamp(5rem, 10vw, 9rem) 1rem; text-align: center;
+    }
+    .cta-strip::before {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(circle at 50% 45%, rgba(255,255,255,0.1), transparent 14rem), linear-gradient(180deg, #000, transparent 40%, #000);
+    }
+    .cta-body { position: relative; z-index: 3; display: grid; justify-items: center; gap: 1.5rem; }
+    .cta-body h2 { max-width: 16ch; }
+    .cta-body p { max-width: 46ch; font-size: 0.96rem; }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .cta-footnote { font-family: "IBM Plex Mono", monospace; font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      position: relative; z-index: 3; width: min(1280px, calc(100% - 2rem)); min-height: 18rem;
+      display: grid; grid-template-columns: 0.7fr 1fr 0.6fr; gap: 2rem; align-items: start;
+      margin: 0 auto 1rem; padding: clamp(1.5rem, 4vw, 3rem);
+      border: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(180deg, rgba(255,255,255,0.035) 1px, transparent 1px), #020202;
+      background-size: 30px 30px;
+    }
+    .site-footer p, .site-footer span, .footer-links a {
+      color: rgba(255,255,255,0.58); font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .footer-links { display: grid; gap: 0.65rem; justify-items: end; }
+    .footer-links a:hover { color: #fff; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 980px) {
+      .nav-toggle { display: grid; }
+      .nav-links {
+        position: absolute; top: calc(100% + 0.6rem); left: 0; right: 0;
+        display: none; grid-template-columns: 1fr 1fr; padding: 1rem;
+        border: 1px solid var(--line); background: rgba(0,0,0,0.92);
+      }
+      .nav-links.is-open { display: grid; }
+      .split-section, .split-section.reverse { grid-template-columns: 1fr; }
+      .principles-grid { grid-template-columns: 1fr; }
+      .site-footer { grid-template-columns: 1fr; }
+      .footer-links { justify-items: start; }
+    }
+    /* ── POPUP MODAL STYLES ── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+      animation: modalFadeIn 240ms ease-out forwards;
+    }
+    @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-window {
+      position: relative; width: min(680px, 100%);
+      max-height: calc(100vh - 3rem);
+      overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+      margin: auto;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%), #040404;
+      border: 1px solid var(--line-strong);
+      box-shadow: 0 0 60px rgba(124, 58, 237, 0.15), 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+      padding: clamp(1.8rem, 4vw, 2.6rem);
+      animation: modalSlideUp 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes modalSlideUp { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-close {
+      position: absolute; top: 1.2rem; right: 1.2rem; width: 2.4rem; height: 2.4rem;
+      display: grid; place-items: center; border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03); color: var(--muted);
+      transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+      cursor: pointer; z-index: 10;
+    }
+    .modal-close:hover { color: #fff; border-color: rgba(124, 58, 237, 0.6); background: rgba(124, 58, 237, 0.12); transform: rotate(90deg); }
+    .modal-header { margin-bottom: 1.6rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .modal-mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2em; color: rgba(124, 58, 237, 0.9); text-transform: uppercase; margin: 0; }
+    .modal-form { display: flex; flex-direction: column; gap: 1.2rem; }
+    .modal-error-banner { padding: 0.75rem 1rem; border: 1px solid rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); color: #fca5a5; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em; }
+    .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .modal-field { display: flex; flex-direction: column; gap: 0.45rem; position: relative; }
+    .modal-field label { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; }
+    .modal-field input, .modal-field textarea {
+      width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line); color: #fff;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 0.92rem; padding: 0.8rem 1rem;
+      outline: none; border-radius: 0; transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+      -webkit-appearance: none; appearance: none;
+    }
+    .modal-field input:focus, .modal-field textarea:focus { border-color: rgba(124, 58, 237, 0.7); background: rgba(124, 58, 237, 0.05); box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12); }
+    .modal-field textarea { resize: vertical; min-height: 5.5rem; max-height: 16rem; line-height: 1.6; }
+    .char-count { align-self: flex-end; font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--dim); margin-top: -0.2rem; }
+    .modal-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .modal-chip {
+      padding: 0.4rem 0.85rem; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.55); font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; transition: border-color 180ms, color 180ms, background 180ms; cursor: pointer;
+    }
+    .modal-chip:hover { color: #fff; border-color: var(--line-strong); }
+    .modal-chip.active { border-color: rgba(124, 58, 237, 0.8); background: rgba(124, 58, 237, 0.15); color: #fff; box-shadow: 0 0 12px rgba(124, 58, 237, 0.2); }
+    .modal-success { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1rem; padding: clamp(1.5rem, 4vw, 3rem) 1rem; animation: modalFadeIn 350ms ease-out forwards; }
+    .success-icon-box {
+      width: 3.4rem; height: 3.4rem; display: grid; place-items: center;
+      border: 1px solid rgba(124, 58, 237, 0.5); background: rgba(124, 58, 237, 0.12);
+      color: rgba(124, 58, 237, 0.95); box-shadow: 0 0 24px rgba(124, 58, 237, 0.2); margin-bottom: 0.5rem;
+    }
+    .success-title { font-family: 'Space Grotesk', Inter, sans-serif; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; text-transform: uppercase; margin: 0; color: #fff; }
+    .success-body { color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 36ch; margin: 0; }
+    @media (max-width: 640px) { .modal-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="noise-layer" aria-hidden="true"></div>
+<div class="grid-layer"  aria-hidden="true"></div>
+<div class="scroll-bar"  aria-hidden="true" id="prog"></div>
+
+<!-- ── NAV ── -->
+<nav class="site-nav" id="site-nav" aria-label="Primary navigation">
+  <a href="/index.html#top" class="nav-brand">
+    <img src="/logo.png" alt="LOKI" style="height:32px;width:auto;display:block;" />
+  </a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation"
+    onclick="document.querySelector('.nav-links').classList.toggle('is-open')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/>
+      <line x1="4" x2="20" y1="18" y2="18"/>
+    </svg>
+  </button>
+  <div class="nav-links">
+    <a href="/about.html" aria-current="page">About</a>
+    <a href="/index.html#services-deep">Services</a>
+    <a href="/index.html#tech">Tech</a>
+    <a href="/landing.html#pricing">Pricing</a>
+    <a href="/contact.html">Contact</a>
+  </div>
+</nav>
+
+<!-- ── PAGE HERO ── -->
+<section class="page-hero" aria-labelledby="hero-title">
+  <div class="page-hero-inner">
+    <div class="page-hero-copy" data-reveal>
+      <p class="section-mono">[ Who We Are ]</p>
+      <h1 id="hero-title">Engineering The Future.</h1>
+      <p>
+        We are a team of operators, architects, and engineers obsessed with building AI-native infrastructure that actually works in production.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── MAIN BODY ── -->
+<div class="about-body">
+  
+  <!-- Section 1 -->
+  <div class="split-section" data-reveal>
+    <div class="split-copy">
+      <p class="section-mono">[ The Mission ]</p>
+      <h2>Move from ambition to execution.</h2>
+      <p>Too many ambitious projects die in the transition from idea to software. We created LOKI to bridge that gap. We don't just write code; we design scalable operational systems.</p>
+      <p>Our background spans cloud infrastructure, machine learning, and high-performance product engineering. We bring that collective experience to every engagement.</p>
+    </div>
+    <div class="visual-frame">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+        <polyline points="2 17 12 22 22 17"></polyline>
+        <polyline points="2 12 12 17 22 12"></polyline>
+      </svg>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── CLOSING CTA STRIP ── -->
+<section class="cta-strip" aria-labelledby="cta-title">
+  <div class="cta-body" data-reveal>
+    <p class="section-mono">[ Let's build together ]</p>
+    <h2 id="cta-title">Bring the impossible system.<br/>We'll make it operational.</h2>
+    <p>No pitch decks. No vague roadmaps. Just a direct conversation about what you need.</p>
+    <div class="cta-actions">
+      <a href="#" class="btn btn-solid" id="cta-email" data-open-modal
+         style="min-height:3.4rem;padding:0 2rem;font-size:0.78rem;">
+        Start Your Project
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+    <p class="cta-footnote">manjeetdevelops@gmail.com &nbsp;&mdash;&nbsp; +91 8506040783 &nbsp;&mdash;&nbsp; Response within 24h</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <a href="#top" aria-label="Back to top">
+    <img src="/logo.png" alt="LOKI" style="height:32px;width:auto;display:block;" />
+  </a>
+  <div>
+    <p>AI-native software, cloud infrastructure, intelligent automation, and digital products. Built for operators who need serious engineering.</p>
+    <div style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.6rem;font-size:0.72rem;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,0.65);">
+      <span style="display:flex;align-items:center;gap:0.45rem;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        5th Floor, Spacetime Coworking, Greater Kailash 2, New Delhi 110048
+      </span>
+      <span style="display:flex;align-items:center;gap:0.45rem;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.73a16 16 0 0 0 6.29 6.29l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2z"/></svg>
+        <a href="tel:8506040783" style="color:inherit">+91 8506040783</a>
+        &nbsp;|&nbsp;
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <a href="mailto:manjeetdevelops@gmail.com" style="color:inherit">manjeetdevelops@gmail.com</a>
+      </span>
+    </div>
+    <span style="margin-top:0.8rem;display:block;">&copy; <span id="yr"></span> LOKI TECHNOLOGIES &mdash; <a href="mailto:manjeetdevelops@gmail.com" style="color:inherit">manjeetdevelops@gmail.com</a></span>
+  </div>
+  <div class="footer-links">
+    <a href="/index.html#top">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/index.html#services-deep">Services</a>
+    <a href="/index.html#tech">Tech</a>
+    <a href="/landing.html#pricing">Pricing</a>
+    <a href="/contact.html">Contact</a>
+    <a href="https://www.linkedin.com/company/loki-labs" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+    <a href="https://github.com/Manaregr8" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </div>
+</footer>
+
+<!-- ── POPUP CONTACT MODAL ── -->
+<div class="modal-backdrop" id="contact-modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="modal-window">
+    <button class="modal-close" id="modal-close-btn" aria-label="Close modal" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <div class="modal-success" id="modal-success" hidden>
+      <div class="success-icon-box" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <p class="modal-mono" style="margin:0;">[ Transmitted ]</p>
+      <h3 class="success-title">Message received.</h3>
+      <p class="success-body">We'll be in touch within one business day. No commitment required.</p>
+      <button type="button" class="btn btn-solid" id="modal-done-btn" style="margin-top:1rem;min-height:3rem;padding:0 2rem;">Done</button>
+    </div>
+
+    <form class="modal-form" id="modal-form" novalidate>
+      <div class="modal-header">
+        <p class="modal-mono">[ INITIATE CONTACT ]</p>
+        <h2 id="m-title" style="font-size:clamp(1.6rem, 3.5vw, 2.2rem);margin:0;">Let's Build Together.</h2>
+        <p class="modal-sub" style="color:var(--muted);font-size:0.88rem;margin:0;">Bring your product, workflow, or infrastructure challenge. We'll respond within 24 hours.</p>
+      </div>
+
+      <div class="modal-error-banner" id="modal-error" hidden></div>
+
+      <div class="modal-row">
+        <div class="modal-field">
+          <label for="m-name">Your Name *</label>
+          <input id="m-name" name="name" type="text" class="form-input" placeholder="Ada Lovelace" required autocomplete="name" />
+        </div>
+        <div class="modal-field">
+          <label for="m-email">Email Address *</label>
+          <input id="m-email" name="email" type="email" class="form-input" placeholder="ada@company.com" required autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label for="m-company">Company <span style="color:var(--dim);font-weight:400;letter-spacing:normal;text-transform:none;">(optional)</span></label>
+        <input id="m-company" name="company" type="text" class="form-input" placeholder="Acme Corp" autocomplete="organization" />
+      </div>
+
+      <div class="modal-field">
+        <label>Area of Interest</label>
+        <div class="modal-chips" id="modal-chips">
+          <button type="button" class="modal-chip active" data-val="AI Solutions">AI Solutions</button>
+          <button type="button" class="modal-chip" data-val="Software Engineering">Software Engineering</button>
+          <button type="button" class="modal-chip" data-val="Cloud Infrastructure">Cloud Infrastructure</button>
+          <button type="button" class="modal-chip" data-val="Automation">Automation</button>
+          <button type="button" class="modal-chip" data-val="Digital Products">Digital Products</button>
+          <button type="button" class="modal-chip" data-val="Other">Other</button>
+        </div>
+        <input type="hidden" name="interest" id="m-interest" value="AI Solutions" />
+      </div>
+
+      <div class="modal-field">
+        <label for="m-msg">Message *</label>
+        <textarea id="m-msg" name="message" class="form-input" required rows="4" maxlength="1200" placeholder="Describe your product, problem, or system requirement..."></textarea>
+        <div class="char-count" id="m-char-count">0 / 1200</div>
+      </div>
+
+      <div class="modal-actions" style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.4rem;">
+        <button type="submit" class="btn btn-solid" id="modal-submit-btn" style="width:100%;justify-content:center;min-height:3.2rem;">
+          <span class="btn-lbl">SEND MESSAGE</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;color:var(--dim);text-transform:uppercase;text-align:center;">Direct reply within 24h · manjeetdevelops@gmail.com · +91 8506040783</span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Scroll progress + compact nav
+  const prog = document.getElementById('prog');
+  const nav  = document.getElementById('site-nav');
+  window.addEventListener('scroll', () => {
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    prog.style.width = (window.scrollY / max * 100) + '%';
+    nav.classList.toggle('is-compact', window.scrollY > 80);
+  }, { passive: true });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('is-visible'), i * 80);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  // Modal logic
+  const modal = document.getElementById('contact-modal');
+  const modalClose = document.getElementById('modal-close-btn');
+  const modalDone = document.getElementById('modal-done-btn');
+  const modalForm = document.getElementById('modal-form');
+  const modalSuccess = document.getElementById('modal-success');
+  const modalError = document.getElementById('modal-error');
+  const modalSubmit = document.getElementById('modal-submit-btn');
+  const modalInterest = document.getElementById('m-interest');
+  const modalChips = document.getElementById('modal-chips');
+  const msgInput = document.getElementById('m-msg');
+  const charCount = document.getElementById('m-char-count');
+
+  function openModal(interest = 'AI Solutions') {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    modalForm.hidden = false;
+    modalSuccess.hidden = true;
+    modalError.hidden = true;
+    modalInterest.value = interest;
+    modalChips.querySelectorAll('.modal-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.val === interest);
+    });
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modalDone.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+  // Connect CTA buttons (data-open-modal only — NOT navbar/footer links)
+  document.querySelectorAll('[data-open-modal], #cta-email').forEach(cta => {
+    cta.addEventListener('click', e => {
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  modalChips.addEventListener('click', e => {
+    const chip = e.target.closest('.modal-chip');
+    if (!chip) return;
+    modalChips.querySelectorAll('.modal-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    modalInterest.value = chip.dataset.val;
+  });
+
+  msgInput.addEventListener('input', () => {
+    charCount.textContent = msgInput.value.length + ' / 1200';
+  });
+
+  modalForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('m-name').value.trim();
+    const email = document.getElementById('m-email').value.trim();
+    const company = document.getElementById('m-company').value.trim();
+    const message = msgInput.value.trim();
+    const interest = modalInterest.value;
+
+    if (!name || !email || !message) {
+      modalError.hidden = false;
+      modalError.textContent = 'Please fill out all required fields.';
+      return;
+    }
+
+    modalSubmit.disabled = true;
+    modalSubmit.querySelector('.btn-lbl').textContent = 'TRANSMITTING...';
+
+    try {
+      await fetch('https://formsubmit.co/ajax/manjeetdevelops@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name, email, company, interest, message })
+      });
+      modalForm.hidden = true;
+      modalSuccess.hidden = false;
+    } catch (err) {
+      modalForm.hidden = true;
+      modalSuccess.hidden = false;
+    } finally {
+      modalSubmit.disabled = false;
+      modalSubmit.querySelector('.btn-lbl').textContent = 'SEND MESSAGE';
+    }
+  });
+</script>
+</body>
+</html>

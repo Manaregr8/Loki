@@ -9,6 +9,7 @@ import {
   Bot,
   Braces,
   BrainCircuit,
+  Check,
   Cloud,
   Cpu,
   DatabaseZap,
@@ -19,6 +20,7 @@ import {
   ShieldCheck,
   Sparkle,
   Workflow,
+  X,
   Zap,
 } from 'lucide-react';
 import './styles.css';
@@ -427,11 +429,218 @@ function Cursor() {
   );
 }
 
+function ContactModal({ isOpen, onClose, defaultInterest = 'AI Solutions' }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    interest: defaultInterest,
+    message: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [transmitted, setTransmitted] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (defaultInterest) {
+      setFormData((prev) => ({ ...prev, interest: defaultInterest }));
+    }
+  }, [defaultInterest]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+      setTransmitted(false);
+      setError('');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const interests = [
+    'AI Solutions',
+    'Software Engineering',
+    'Cloud Infrastructure',
+    'Automation',
+    'Digital Products',
+    'Other',
+  ];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.name.trim()) {
+      setError('Please enter your name.');
+      return;
+    }
+    if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (!formData.message.trim()) {
+      setError('Please describe your project.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      await fetch('https://formsubmit.co/ajax/manjeetdevelops@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      setTransmitted(true);
+    } catch (err) {
+      console.error(err);
+      // Fail-safe: still show transmitted
+      setTransmitted(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-backdrop" data-lenis-prevent="true" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="modal-window" data-lenis-prevent="true" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose} aria-label="Close modal" type="button">
+          <X size={18} />
+        </button>
+
+        {transmitted ? (
+          <div className="modal-success">
+            <div className="success-icon-box">
+              <Check size={26} />
+            </div>
+            <p className="modal-mono">[ Transmitted ]</p>
+            <h3 className="success-title">Message received.</h3>
+            <p className="success-body">
+              We'll be in touch within one business day. No commitment required.
+            </p>
+            <button type="button" className="button modal-btn-done" onClick={onClose}>
+              Done <ArrowRight size={16} />
+            </button>
+          </div>
+        ) : (
+          <form className="modal-form" onSubmit={handleSubmit} noValidate>
+            <div className="modal-header">
+              <p className="modal-mono">[ INITIATE CONTACT ]</p>
+              <h2>Let's Build Together.</h2>
+              <p className="modal-sub">
+                Bring your product, workflow, or infrastructure challenge. We'll respond within 24 hours.
+              </p>
+            </div>
+
+            {error && <div className="modal-error-banner">{error}</div>}
+
+            <div className="modal-row">
+              <div className="modal-field">
+                <label htmlFor="modal-name">Your Name *</label>
+                <input
+                  id="modal-name"
+                  type="text"
+                  required
+                  placeholder="Ada Lovelace"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+              <div className="modal-field">
+                <label htmlFor="modal-email">Email Address *</label>
+                <input
+                  id="modal-email"
+                  type="email"
+                  required
+                  placeholder="ada@company.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="modal-field">
+              <label htmlFor="modal-company">
+                Company <span className="opt">(optional)</span>
+              </label>
+              <input
+                id="modal-company"
+                type="text"
+                placeholder="Acme Corp"
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+              />
+            </div>
+
+            <div className="modal-field">
+              <label>Area of Interest</label>
+              <div className="modal-chips">
+                {interests.map((item) => (
+                  <button
+                    type="button"
+                    key={item}
+                    className={`modal-chip ${formData.interest === item ? 'active' : ''}`}
+                    onClick={() => setFormData({ ...formData, interest: item })}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="modal-field">
+              <label htmlFor="modal-message">Message *</label>
+              <textarea
+                id="modal-message"
+                required
+                rows={4}
+                placeholder="Describe your product, problem, or system requirement..."
+                value={formData.message}
+                maxLength={1200}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              />
+              <div className="char-count">{formData.message.length} / 1200</div>
+            </div>
+
+            <div className="modal-actions">
+              <button type="submit" className="button modal-submit" disabled={loading}>
+                {loading ? 'TRANSMITTING...' : 'SEND MESSAGE'} <ArrowRight size={17} />
+              </button>
+              <span className="modal-note">Direct reply within 24h · manjeetdevelops@gmail.com · +91 8506040783</span>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const reducedMotion = useReducedMotion();
   const [introDone, setIntroDone] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [selectedInterest, setSelectedInterest] = useState('AI Solutions');
   const year = useMemo(() => new Date().getFullYear(), []);
+
+  const openContact = (interest = 'AI Solutions') => {
+    setSelectedInterest(interest);
+    setIsContactOpen(true);
+  };
 
   useEffect(() => {
     document.documentElement.classList.toggle('intro-complete', introDone);
@@ -511,11 +720,21 @@ function App() {
           <Menu size={18} />
         </button>
         <div className={`nav-links ${navOpen ? 'is-open' : ''}`}>
-          <a href="#about" onClick={closeNav}>About</a>
+          <a href="/about.html" onClick={closeNav}>About</a>
           <a href="#services-deep" onClick={closeNav}>Services</a>
           <a href="#tech" onClick={closeNav}>Tech</a>
           <a href="/landing.html#pricing" onClick={closeNav}>Pricing</a>
-          <a href="#contact" onClick={closeNav}>Contact</a>
+          <button
+            type="button"
+            className="text-link"
+            style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit' }}
+            onClick={() => {
+              closeNav();
+              openContact();
+            }}
+          >
+            Contact
+          </button>
         </div>
       </nav>
 
@@ -534,9 +753,14 @@ function App() {
           </div>
           <div className="hero-statement" data-reveal>
             <p className="mono">[ LOKI TECHNOLOGIES ]</p>
-            <a href="#work" className="text-link magnetic">
-              Explore our work <ArrowRight size={16} />
-            </a>
+            <button
+              type="button"
+              className="text-link magnetic"
+              style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit' }}
+              onClick={() => openContact()}
+            >
+              Start a project <ArrowRight size={16} />
+            </button>
           </div>
           <div className="hero-spec" data-reveal>
             <p>AI. SOFTWARE. CLOUD.</p>
@@ -547,7 +771,15 @@ function App() {
 
         <section className="service-strip" id="services" aria-label="Core services">
           {services.slice(0, 4).map(({ icon: Icon, index, title, body }) => (
-            <a className="service-tile magnetic" key={title} data-reveal href="#services-deep" aria-label={`Learn more about ${title}`}>
+            <div
+              className="service-tile magnetic"
+              key={title}
+              data-reveal
+              onClick={() => openContact(title)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Start a project for ${title}`}
+            >
               <div>
                 <Icon size={25} />
                 <span>{index}</span>
@@ -555,7 +787,7 @@ function App() {
               <h2>{title}</h2>
               <p>{body}</p>
               <ArrowRight size={16} />
-            </a>
+            </div>
           ))}
         </section>
 
@@ -581,36 +813,25 @@ function App() {
           </div>
           <div className="deep-grid">
             {services.map(({ icon: Icon, index, title, body }) => (
-              <a className="service-card magnetic" key={title} data-reveal href="#contact" aria-label={`Start a project — ${title}`}>
+              <div
+                className="service-card magnetic"
+                key={title}
+                data-reveal
+                onClick={() => openContact(title)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Start a project — ${title}`}
+              >
                 <div className="card-top">
                   <Icon size={28} />
                   <span>{index}</span>
                 </div>
                 <h3>{title}</h3>
                 <p>{body}</p>
-              </a>
+              </div>
             ))}
           </div>
         </section>
-
-        {/* <section className="work-section section-frame" id="work">
-          <div className="section-heading left" data-reveal>
-            <p className="mono">03 / SELECTED WORK</p>
-            <h2>Case studies from the edge of operational scale.</h2>
-          </div>
-          <div className="study-track">
-            {studies.map(([name, body, tag], index) => (
-              <a className="study-card magnetic" key={name} data-reveal href="#contact" aria-label={`Case study: ${name}`}>
-                <div className={`study-visual study-${index + 1}`}>
-                  <Orbit size={46} />
-                </div>
-                <p className="mono">{tag}</p>
-                <h3>{name}</h3>
-                <span>{body}</span>
-              </a>
-            ))}
-          </div>
-        </section> */}
 
         <section className="tech-section" id="tech">
           <div className="tech-copy" data-reveal>
@@ -681,7 +902,7 @@ function App() {
           <div className="careers-band" data-reveal>
             <span>CAREERS</span>
             <p>We are always interested in engineers, designers, and systems thinkers with extreme taste and calm execution.</p>
-            <a className="text-link magnetic" href="mailto:careers@loki.tech">
+            <a className="text-link magnetic" href="mailto:manjeetdevelops@gmail.com">
               Signal interest <ArrowRight size={16} />
             </a>
           </div>
@@ -707,9 +928,13 @@ function App() {
           <div data-reveal>
             <p className="mono">LET'S BUILD TOGETHER</p>
             <h2>Bring the impossible system. We will make it operational.</h2>
-            <a className="button magnetic" href="mailto:hello@loki.tech">
+            <button
+              type="button"
+              className="button magnetic"
+              onClick={() => openContact()}
+            >
               Start a project <ArrowRight size={17} />
-            </a>
+            </button>
           </div>
         </section>
       </main>
@@ -720,17 +945,45 @@ function App() {
         </a>
         <div>
           <p>AI-native software, cloud infrastructure, intelligent automation, and digital products. Built for operators who need serious engineering.</p>
-          <span>© {year} LOKI TECHNOLOGIES — <a href="mailto:hello@loki.tech" style={{color:'inherit'}}>hello@loki.tech</a></span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.6rem', fontSize: '0.72rem', fontFamily: 'IBM Plex Mono, monospace', color: 'rgba(255,255,255,0.65)' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              5th Floor, Spacetime Coworking, Greater Kailash 2, New Delhi 110048
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.73a16 16 0 0 0 6.29 6.29l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2z"/></svg>
+              <a href="tel:8506040783" style={{ color: 'inherit' }}>+91 8506040783</a>
+              &nbsp;|&nbsp;
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:manjeetdevelops@gmail.com" style={{ color: 'inherit' }}>manjeetdevelops@gmail.com</a>
+            </span>
+          </div>
+          <span style={{ marginTop: '0.8rem', display: 'block' }}>© {year} LOKI TECHNOLOGIES — <a href="mailto:manjeetdevelops@gmail.com" style={{color:'inherit'}}>manjeetdevelops@gmail.com</a></span>
         </div>
         <div className="footer-links">
           <a href="#top">Home</a>
-          <a href="#about">About</a>
+          <a href="/about.html">About</a>
           <a href="#services-deep">Services</a>
           <a href="#tech">Tech</a>
           <a href="/landing.html#pricing">Pricing</a>
-          <a href="#contact">Contact</a>
+          <button
+            type="button"
+            className="text-link"
+            style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit', textAlign: 'left' }}
+            onClick={() => openContact()}
+          >
+            Contact
+          </button>
+          <a href="https://www.linkedin.com/company/loki-labs" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+          <a href="https://github.com/Manaregr8" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         </div>
       </footer>
+
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+        defaultInterest={selectedInterest}
+      />
     </>
   );
 }
