@@ -119,10 +119,22 @@
     .nav-brand { display: inline-flex; }
 
     .nav-toggle {
-      display: none; width: 2.5rem; height: 2.5rem; place-items: center;
-      border: 1px solid var(--line); background: #030303; cursor: pointer; color: inherit;
+      display: none;
+      flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+      width: 2.6rem; height: 2.6rem;
+      border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+      cursor: pointer; color: inherit; z-index: 82; position: relative;
+      transition: border-color 220ms ease, background 220ms ease;
     }
-
+    .nav-toggle:hover { border-color: rgba(124,58,237,0.7); background: rgba(124,58,237,0.08); }
+    .nav-toggle-bar {
+      display: block; width: 18px; height: 1.5px; background: #fff;
+      transition: transform 300ms cubic-bezier(0.16,1,0.3,1), opacity 200ms ease;
+      transform-origin: center;
+    }
+    .nav-toggle.is-open .nav-toggle-bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-toggle.is-open .nav-toggle-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-toggle.is-open .nav-toggle-bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
     .nav-links {
       display: flex; align-items: center; gap: clamp(1rem, 3vw, 2.2rem);
       color: rgba(255,255,255,0.7);
@@ -444,13 +456,34 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 980px) {
-      .nav-toggle      { display: grid; }
+      .nav-toggle { display: flex; }
+      .nav-brand { z-index: 82; position: relative; }
       .nav-links {
-        position: absolute; top: calc(100% + 0.6rem); left: 0; right: 0;
-        display: none; grid-template-columns: 1fr 1fr;
-        padding: 1rem; border: 1px solid var(--line); background: rgba(0,0,0,0.92);
+        position: fixed; inset: 0; width: 100vw; height: 100vh;
+        background: #000; display: flex !important; flex-direction: column;
+        justify-content: center; align-items: center; gap: 0;
+        pointer-events: none;
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+        transition: clip-path 0.65s cubic-bezier(0.76, 0, 0.24, 1);
+        z-index: 81;
       }
-      .nav-links.is-open { display: grid; }
+      .nav-links.is-open { pointer-events: auto; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      .nav-links a {
+        display: block; width: 100%; text-align: center;
+        font-family: 'Space Grotesk', Inter, sans-serif;
+        font-size: clamp(2.2rem, 9vw, 4.5rem); font-weight: 700;
+        letter-spacing: -0.01em; text-transform: uppercase;
+        color: rgba(255,255,255,0.15); padding: 0.55rem 2rem;
+        transition: color 250ms ease; line-height: 1; text-shadow: none;
+      }
+      .nav-links a:hover { color: #fff; text-shadow: 0 0 3rem rgba(124,58,237,0.5); }
+      .nav-links.is-open a { animation: navLinkIn 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+      .nav-links.is-open a:nth-child(1) { animation-delay: 0.15s; }
+      .nav-links.is-open a:nth-child(2) { animation-delay: 0.22s; }
+      .nav-links.is-open a:nth-child(3) { animation-delay: 0.29s; }
+      .nav-links.is-open a:nth-child(4) { animation-delay: 0.36s; }
+      .nav-links.is-open a:nth-child(5) { animation-delay: 0.43s; }
+      @keyframes navLinkIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
       .page-hero-inner   { grid-template-columns: 1fr; }
       .hero-tiles        { flex-direction: row; flex-wrap: wrap; }
       .hero-tile         { flex: 1 1 calc(50% - 0.5rem); }
@@ -485,20 +518,17 @@
   <a href="/index.html#top" class="nav-brand">
     <img src="/logo.png" alt="LOKI" style="height:32px;width:auto;display:block;" />
   </a>
-  <button class="nav-toggle" type="button" aria-label="Toggle navigation"
-    onclick="document.querySelector('.nav-links').classList.toggle('is-open')">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/>
-      <line x1="4" x2="20" y1="18" y2="18"/>
-    </svg>
+  <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation">
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
   </button>
-  <div class="nav-links">
-    <a href="/about.html">About</a>
-    <a href="/index.html#services-deep">Services</a>
-    <a href="/index.html#tech">Tech</a>
-    <a href="/landing.html#pricing">Pricing</a>
-    <a href="/contact.html" aria-current="page">Contact</a>
+  <div class="nav-links" id="nav-links">
+    <a href="/about.html" data-value="ABOUT">About</a>
+    <a href="/index.html#services-deep" data-value="SERVICES">Services</a>
+    <a href="/index.html#tech" data-value="TECH">Tech</a>
+    <a href="/landing.html#pricing" data-value="PRICING">Pricing</a>
+    <a href="/contact.html" aria-current="page" data-value="CONTACT">Contact</a>
   </div>
 </nav>
 
@@ -767,6 +797,48 @@
     nav.classList.toggle('is-compact', window.scrollY > 80);
   }, { passive: true });
 
+  // ── Nav toggle ──
+  const navToggle = document.getElementById('nav-toggle');
+  const navLinks  = document.getElementById('nav-links');
+  navToggle.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('is-open');
+    navToggle.classList.toggle('is-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('is-open');
+      navToggle.classList.remove('is-open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // ── Scramble effect ──
+  const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  document.querySelectorAll('.nav-links a').forEach(el => {
+    const original = el.dataset.value || el.innerText.trim();
+    el.dataset.value = original;
+    el.addEventListener('mouseenter', () => {
+      if (el.dataset.scrambling === 'true') return;
+      el.dataset.scrambling = 'true';
+      let iterations = 0;
+      clearInterval(el._t);
+      el._t = setInterval(() => {
+        el.innerText = original.split('').map((c, i) => {
+          if (c === ' ') return ' ';
+          if (i < iterations) return original[i];
+          return LETTERS[Math.floor(Math.random() * 26)];
+        }).join('');
+        if (iterations >= original.length) {
+          clearInterval(el._t);
+          el.innerText = original;
+          el.dataset.scrambling = 'false';
+        }
+        iterations += 1 / 5;
+      }, 30);
+    });
+  });
+
   // ── Reveal on scroll ──
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e, i) => {
@@ -882,5 +954,6 @@
     }, 400);
   });
 </script>
+<script src="/scramble.js"></script>
 </body>
 </html>

@@ -695,6 +695,46 @@ function App() {
     return () => window.removeEventListener('scroll', update);
   }, []);
 
+  // Letter-scramble effect on nav links
+  useEffect(() => {
+    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const attachScramble = (el) => {
+      if (el.dataset.scrambleAttached) return;
+      el.dataset.scrambleAttached = 'true';
+      const original = (el.dataset.value || el.innerText).trim();
+      el.dataset.value = original;
+      el.addEventListener('mouseenter', () => {
+        if (el.dataset.scrambling === 'true') return;
+        el.dataset.scrambling = 'true';
+        let iterations = 0;
+        clearInterval(el._scrambleTimer);
+        el._scrambleTimer = setInterval(() => {
+          el.innerText = original.split('').map((char, i) => {
+            if (char === ' ') return ' ';
+            if (i < iterations) return original[i];
+            return LETTERS[Math.floor(Math.random() * 26)];
+          }).join('');
+          if (iterations >= original.length) {
+            clearInterval(el._scrambleTimer);
+            el.innerText = original;
+            el.dataset.scrambling = 'false';
+          }
+          iterations += 1 / 5;
+        }, 30);
+      });
+    };
+
+    const updateScramble = () => {
+      document.querySelectorAll('.nav-links a, .nav-links .scramble-btn').forEach(attachScramble);
+    };
+    updateScramble();
+    // Re-attach if nav opens (DOM may re-render)
+    const observer = new MutationObserver(updateScramble);
+    const navLinks = document.querySelector('.nav-links');
+    if (navLinks) observer.observe(navLinks, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
   const closeNav = () => setNavOpen(false);
 
   return (
@@ -716,18 +756,26 @@ function App() {
         <a href="#top" className="nav-brand magnetic" onClick={closeNav}>
           <LokiLogo />
         </a>
-        <button className="nav-toggle" type="button" aria-label="Toggle navigation" onClick={() => setNavOpen((open) => !open)}>
-          <Menu size={18} />
+        <button
+          className={`nav-toggle ${navOpen ? 'is-open' : ''}`}
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded={navOpen}
+          onClick={() => setNavOpen((open) => !open)}
+        >
+          <span className="nav-toggle-bar" />
+          <span className="nav-toggle-bar" />
+          <span className="nav-toggle-bar" />
         </button>
         <div className={`nav-links ${navOpen ? 'is-open' : ''}`}>
-          <a href="/about.html" onClick={closeNav}>About</a>
-          <a href="#services-deep" onClick={closeNav}>Services</a>
-          <a href="#tech" onClick={closeNav}>Tech</a>
-          <a href="/landing.html#pricing" onClick={closeNav}>Pricing</a>
+          <a href="/about.html" data-value="ABOUT" onClick={closeNav}>About</a>
+          <a href="#services-deep" data-value="SERVICES" onClick={closeNav}>Services</a>
+          <a href="#tech" data-value="TECH" onClick={closeNav}>Tech</a>
+          <a href="/landing.html#pricing" data-value="PRICING" onClick={closeNav}>Pricing</a>
           <button
             type="button"
-            className="text-link"
-            style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit' }}
+            className="scramble-btn"
+            data-value="CONTACT"
             onClick={() => {
               closeNav();
               openContact();
